@@ -1,0 +1,25 @@
+{
+  "view": {
+    "center": [-10997148, 4569099],
+    "zoom": 4
+  },
+  "controls": {
+    "Attribution": {}
+  },
+  "layers": [
+    {
+      "type": "Tile",
+      "opts": {
+       "extent": [-13884991, 2870341, -7455066, 6338219],
+       "source": {
+          "type": "WMS",
+          "opts": {
+            "url": "http://demo.boundlessgeo.com/geoserver/wms",
+            "params": {"LAYERS": "topp:states", "TILED": true},
+            "serverType": "geoserver"
+          }
+        }
+      }
+    }
+  ]
+}
