@@ -80,7 +80,7 @@ parse.map = function (obj) {
 
 module.exports = function (cfg) {
   var str = parse.map(cfg);
-  return prettyJs('var map = new ol.Map({' + str + '})', { indent: '  ' });
+  return prettyJs('var map = new ol.Map(' + str + ')', { indent: '  ' });
 };
 
 },{"pretty-js":2}],2:[function(require,module,exports){
