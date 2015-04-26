@@ -9,6 +9,7 @@ function map(o, func) {
 
 
 function defineProj(proj) {
+  let str = '';
   if (proj.srs && (proj.srs !== 'EPSG:3857' && proj.srs !== 'EPSG:4326')) {
     assert(proj.def, '`projection.def` undefined. Should be proj or wkt string');
     let str = `proj4.defs('${proj.srs}', '${proj.def}');`;
@@ -18,8 +19,8 @@ function defineProj(proj) {
         proj.setExtent(${proj.extent});
       `;
     }
-    return str;
   }
+  return str;
 }
 
 function objToString(obj, valTransform = _.identity) {
