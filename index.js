@@ -1,9 +1,25 @@
+const assert = require('assert');
 const prettyJs = require('pretty-js');
 
 function identity(x) { return x; }
 
 function map(o, func) {
   return Object.keys(o).map(key => func(o[key], key));
+}
+
+
+function defineProj(proj) {
+  if (proj.srs && (proj.srs !== 'EPSG:3857' && proj.srs !== 'EPSG:4326')) {
+    assert(proj.def, '`projection.def` undefined. Should be proj or wkt string');
+    let str = `proj4.defs('${proj.srs}', '${proj.def}');`;
+    if (proj.extent) {
+      str += `
+        var proj = ol.proj.get('${proj.srs}');
+        proj.setExtent(${proj.extent});
+      `;
+    }
+    return str;
+  }
 }
 
 function objToString(obj, valTransform = _.identity) {
@@ -49,12 +65,20 @@ parse.array = function(type, v, k) {
   return '[' + map(v, (v, k) => parse[type](v,k)).join(',') + ']'
 };
 
-parse.view = parse.createObj.bind(this, 'View');
 parse.control = parse.createObj.bind(this, 'control');
 parse.source = parse.createObj.bind(this, 'source')
 
 parse.controls = parse.array.bind(this, 'control');
 parse.layers = parse.array.bind(this, 'layer');
+
+
+parse.view = function(v, k) {
+  if (v.projection) {
+    v.projection = v.projection.srs;
+  }
+  
+  return parse.createObj('View', v, k);
+};
 
 
 parse.layer = function(v, k) {
@@ -63,10 +87,16 @@ parse.layer = function(v, k) {
 };
 
 parse.map = function(obj) {
-  return objToString(obj, (v, k) => parse[k] ? parse[k](v) : JSON.stringify(v));
+  let str = '';
+  if (obj.view.projection) {
+    str += defineProj(obj.view.projection);
+  }
+  str += 'var map = new ol.Map(' +
+    objToString(obj, (v, k) => parse[k] ? parse[k](v) : JSON.stringify(v)) +
+    ');'
+  return str;
 };
 
 module.exports = function(cfg) {
-  let str = parse.map(cfg);
-  return prettyJs('var map = new ol.Map(' + str + ')', {indent: '  ',});
+  return prettyJs(parse.map(cfg), {indent: '  ',});
 };
