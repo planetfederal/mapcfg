@@ -15,14 +15,15 @@ function map(o, func) {
 }
 
 function defineProj(proj) {
+  var str = '';
   if (proj.srs && (proj.srs !== 'EPSG:3857' && proj.srs !== 'EPSG:4326')) {
     assert(proj.def, '`projection.def` undefined. Should be proj or wkt string');
-    var str = 'proj4.defs(\'' + proj.srs + '\', \'' + proj.def + '\');';
+    str += 'proj4.defs(\'' + proj.srs + '\', \'' + proj.def + '\');';
     if (proj.extent) {
       str += '\n        var proj = ol.proj.get(\'' + proj.srs + '\');\n        proj.setExtent(' + proj.extent + ');\n      ';
     }
-    return str;
   }
+  return str;
 }
 
 function objToString(obj) {
