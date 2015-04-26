@@ -2,7 +2,7 @@
   "name": "mapcfg",
   "version": "1.0.0",
   "description": "",
-  "main": "mapcfg.js",
+  "main": "index.js",
   "scripts": {
     "start": "watchify index.js -o mapcfg.js --standalone mapcfg",
     "test": "browserify tests/index.js | testling -x open"
@@ -10,8 +10,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "babelify": "^5.0.4",
-    "browserify": "^9.0.3",
+    "babelify": "^6.0.2",
+    "browserify": "^9.0.8",
     "phantomjs": "^1.9.16",
     "tape": "^3.5.0",
     "testling": "^1.7.1",
@@ -20,6 +20,7 @@
     "openlayers": "^3.3.0"
   },
   "dependencies": {
+    "js-prettify": "^1.4.0",
     "pretty-js": "^0.1.8"
   },
   "browserify": {

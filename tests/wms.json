@@ -12,7 +12,7 @@
       "opts": {
        "extent": [-13884991, 2870341, -7455066, 6338219],
        "source": {
-          "type": "WMS",
+          "type": "ImageWMS",
           "opts": {
             "url": "http://demo.boundlessgeo.com/geoserver/wms",
             "params": {"LAYERS": "topp:states", "TILED": true},

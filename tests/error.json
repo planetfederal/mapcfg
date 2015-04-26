@@ -1,0 +1,17 @@
+{
+  "target": "map",
+  "view": {
+    "center": [0,0],
+    "zoom": 0
+  },
+  "layers": [
+    {
+      "type": "Wakka",
+      "opts": {
+       "source": {
+          "type": "OSM"
+        }
+      }
+    }
+  ]
+}
