@@ -1,7 +1,7 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.mapcfg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-"use strict";
+'use strict';
 
-var prettyJs = require("pretty-js");
+var prettyJs = require('pretty-js');
 
 function identity(x) {
   return x;
@@ -18,56 +18,58 @@ function objToString(obj) {
 
   var str = map(obj, function (v, k) {
     var val = valTransform(v, k);
-    return "" + k + ": " + val;
-  }).join(",");
+    return '' + k + ': ' + val;
+  }).join(',');
 
-  return "{" + str + "}";
+  return '{' + str + '}';
 }
 
+/** Config Parser. Generates object to pass into ol.map */
 var parse = {};
 
 parse.createObj = function (type, v) {
-  var k = arguments[2] === undefined ? "" : arguments[2];
+  var k = arguments[2] === undefined ? '' : arguments[2];
 
   var subtype = v.type || k;
   var opts = v.opts || v;
 
-  if (subtype !== "") {
-    subtype = "." + subtype;
+  // if ol present go ahead and do some basic validation
+  if (ol && (typeof ol[type] === undefined || subtype && typeof ol[type][subtype] === undefined)) {
+    throw new Error('ol.' + type + '' + subtype + ' does not exist');
+  }
+
+  if (subtype !== '') {
+    subtype = '.' + subtype;
   }
 
   if (opts) {
     opts = objToString(opts, function (v, k) {
-      if (typeof v === "string" && v.indexOf("new ol.") === 0) {
-        console.log();
+      if (typeof v === 'string' && v.indexOf('new ol.') === 0) {
         return v;
       } else {
         return JSON.stringify(v);
       }
     });
   }
-  return "new ol." + type + "" + subtype + "(" + opts + ")";
+  return 'new ol.' + type + '' + subtype + '(' + opts + ')';
 };
 
-parse.view = parse.createObj.bind(undefined, "View");
-parse.control = parse.createObj.bind(undefined, "control");
-parse.source = parse.createObj.bind(undefined, "source");
-
-parse.controls = function (v, k) {
-  return "[" + map(v, function (v, k) {
-    return parse.control(v, k);
-  }).join(",") + "]";
+parse.array = function (type, v, k) {
+  return '[' + map(v, function (v, k) {
+    return parse[type](v, k);
+  }).join(',') + ']';
 };
+
+parse.view = parse.createObj.bind(undefined, 'View');
+parse.control = parse.createObj.bind(undefined, 'control');
+parse.source = parse.createObj.bind(undefined, 'source');
+
+parse.controls = parse.array.bind(undefined, 'control');
+parse.layers = parse.array.bind(undefined, 'layer');
 
 parse.layer = function (v, k) {
   v.opts.source = parse.source(v.opts.source);
-  return parse.createObj("layer", v, k);
-};
-
-parse.layers = function (v, k) {
-  return "[" + map(v, function (v, k) {
-    return parse.layer(v);
-  }).join(",") + "]";
+  return parse.createObj('layer', v, k);
 };
 
 parse.map = function (obj) {
@@ -78,7 +80,7 @@ parse.map = function (obj) {
 
 module.exports = function (cfg) {
   var str = parse.map(cfg);
-  return prettyJs(str, { indent: "  " });
+  return prettyJs('var map = new ol.Map({' + str + '})', { indent: '  ' });
 };
 
 },{"pretty-js":2}],2:[function(require,module,exports){
