@@ -68,5 +68,5 @@ parse.map = function(obj) {
 
 module.exports = function(cfg) {
   let str = parse.map(cfg);
-  return prettyJs('var map = new ol.Map({' + str + '})', {indent: '  ',});
+  return prettyJs('var map = new ol.Map(' + str + ')', {indent: '  ',});
 };
